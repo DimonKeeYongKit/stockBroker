@@ -16,12 +16,13 @@ A simple yet robust command-line tool to manage and record trades from investors
 
 ## 📂 Project Structure
 stockbroker/<br />
-├── orders.csv # Trade book records<br />
-├── orders.txt # Sample orders records<br />
-├── stockbroker.bat # Windows startup script<br />
-├── stockbroker.log # (Additional) Log file<br />
-├── stockbroker.py # Main application script<br />
-├── stockcode.csv # List of valid stock codes<br />
+├── orders.csv<br />
+├── orders.txt<br />
+├── stockbroker.bat<br />
+├── stockbroker.log<br />
+├── stockbroker.py<br />
+├── stockcode.csv<br />
+├── test_stockbroker.py<br />
 └── README.md<br />
 
 <br /><br />
