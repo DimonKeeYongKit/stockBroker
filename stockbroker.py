@@ -8,6 +8,10 @@ import sys
 import os
 import csv
 import logging
+from typing import List, Set, Tuple
+
+Trade = Tuple[str, str, float, int]
+Orders = List[Trade]
 
 # Configure logging
 logging.basicConfig(
@@ -19,13 +23,13 @@ logging.basicConfig(
 STOCK_FILE = "stockcode.csv"
 ORDER_FILE = "orders.csv"
 
-def load_valid_stocks():
+def load_valid_stocks() -> Set[str]:
     if not os.path.exists(STOCK_FILE):
         return set()
     with open(STOCK_FILE, "r") as f:
         return set(line.strip().upper() for line in f if line.strip())
 
-def load_orders():
+def load_orders() -> Orders:
     orders = []
     if os.path.exists(ORDER_FILE):
         with open(ORDER_FILE, "r") as f:
@@ -35,13 +39,19 @@ def load_orders():
                     orders.append([action, stock, float(price), int(volume)])
     return orders
 
-def save_orders(orders):
+def save_orders(orders: Orders) -> None:
     with open(ORDER_FILE, "w", newline="") as f:
         writer = csv.writer(f)
         for order in orders:
             writer.writerow([order[0], order[1], f"{order[2]:.2f}", order[3]])
 
-def is_valid_trade(action, stock, price, volume, valid_stocks):
+def is_valid_trade(
+    action: str,
+    stock: str,
+    price: float,
+    volume: int,
+    valid_stocks: Set[str]
+) -> bool:
     if action not in ["buy", "sell"]:
         print("Invalid trade action.")
         logging.warning(f"Rejected trade due to invalid action: {action}")
@@ -64,7 +74,10 @@ def is_valid_trade(action, stock, price, volume, valid_stocks):
         return False
     return True
 
-def process_trade(trade, orders):
+def process_trade(
+    trade: Trade,
+    orders: Orders
+) -> None:
     action, stock, price, volume = trade
     for order in orders:
         if order[0] == action and order[1] == stock and order[2] == price:
@@ -76,7 +89,11 @@ def process_trade(trade, orders):
     print("Trade book added.")
     logging.info(f"Added new {action.upper()} trade: {stock} at {price:.2f} for {volume}")
 
-def handle_input_line(line, valid_stocks, orders):
+def handle_input_line(
+    line: str,
+    valid_stocks: Set[str],
+    orders: Orders
+) -> None:
     try:
         parts = line.strip().split()
         if len(parts) != 4:
@@ -91,7 +108,10 @@ def handle_input_line(line, valid_stocks, orders):
     except Exception as e:
         print(f"Error processing trade: {e}")
 
-def interactive_mode(valid_stocks, orders):
+def interactive_mode(
+    valid_stocks: Set[str],
+    orders: Orders
+) -> None:
     while True:
         line = input("$ ").strip()
         if line.lower() == "exit":
@@ -99,7 +119,11 @@ def interactive_mode(valid_stocks, orders):
         handle_input_line(line, valid_stocks, orders)
     save_orders(orders)
 
-def file_mode(file_path, valid_stocks, orders):
+def file_mode(
+    file_path: str,
+    valid_stocks: Set[str],
+    orders: Orders
+) -> None:
     if not os.path.exists(file_path):
         print(f"File not found: {file_path}")
         return
